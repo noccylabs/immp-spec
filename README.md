@@ -15,5 +15,5 @@ Internet; IMMP.
 
 ## Join the development process
 
-Use the issue tracker, fork, and send us your push requests. Who better to help
+Use the issue tracker, fork, and send us your pull requests. Who better to help
 design the mail protocol of the future but the people that will use it.
