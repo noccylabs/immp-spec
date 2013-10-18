@@ -10,14 +10,30 @@ mainly transport encryption and digital signing/encryption which have been added
 later as an afterthought.
 
 This document proposes a new standard for sending and receiving e-mail on the
-Internet; IMMP.
+Internet; IMMP - Internet Mail and Messaging Protocol.
 
-## Notes
+This draft is maintained by NoccyLabs on GitHub: 
 
-The term *e-mail* is used throughout this document to reference the implementation
-specified in this draft unless otherwise specified.
+      http://github.com/noccylabs/immp-spec/
 
-# Design Requirements
+# Conventions
+
+ * The term *e-mail* is used throughout this document to reference the implementation specified in this draft unless otherwise specified.
+
+> ***CV*** Maybe it would be appropriate to use *e-mail* for the old-school mail, and *i-mail* for "internet mail"? This would also indicate the paradigm change introduced by this prodocol.
+
+ * In examples, `S:` is used to indicate a response from the server while `C:` indicates data sent by the client.
+
+Terminology:
+
+ * *mailbox* is a storage location for folders and messages.
+ * *account* is a primary mailbox associated with login credentials.
+ * *message* is one or more pieces of *data* with at least one *content* part.
+ * *data* is a message chunk, such as the content in HTML or MarkDown format, an image or an attachment.
+
+# Design Considerations
+
+The following points are key to the design of the protocol:
 
  * All transport of messages or user information requires transport encryption.
  * The protocol must be plaintext and easy to follow.
@@ -31,17 +47,15 @@ specified in this draft unless otherwise specified.
  * The protocol should authenticate originating domains, while allowing the sender
    to remain anonymous.
 
-# The Protocol
+# The Protocol Phases
 
 The protocol is divided up into a number of phases, each allowing a specific
 subset of the supported commands.
 
-1. **Unencrypted** - In this phase only commands to upgrade the transport are
-allowed.
-2. **Unauthenticated** - In this phase only authentication commands (local users
-as well as remote cookies) or push-events are allowed.
+1. **Unencrypted** - In this phase only commands to upgrade the transport are allowed. No messages can be delivered, and no authentication can be made.
+2. **Unauthenticated** - In this phase only authentication commands (local users as well as remote cookies) or push-events are allowed.
 3. **Local Authenticated** - can access mailboxes and send mail.
-4. **Remotely Authenticated** - Can deliver mail to local accounts.
+4. **Remotely Authenticated** - Can deliver mail to local mailboxes.
 
 # Features
 
@@ -75,9 +89,24 @@ Alice could in this case get her mailing list subscriptions (the involuntary kin
 directed to the `:inbox/Mailinglists` folder by providing her IMID as
 `alice+mailinglists@domain.com`. Servers implementing IMMP MUST respect the folder
 redirections, and websites supporting IMMP MUST respect them for any communication
-but ignore them for any (public) display.
+but ignore them for any (public) display. Default folders such as INBOX, DRAFTS,
+SENT and JUNK should be excluded from filtering.
 
-Messages are references as `user@host/mailbox#messageid`.
+Messages are references as `user@host/mailbox#messageid`:
+
+~~~~
+  alice@domain.com
+  |--INBOX
+  :   |-- 619b982c-f9b4-4263-bbc7-755afc7710dd
+      |-- 716e9a9e-7a48-4fd0-aa80-a1ac52f13cb2
+      :
+~~~~
+
+In this example the full URI to the first message would be:
+
+      alice@domain.com/INBOX#619b982c-f9b4-4263-bbc7-755afc7710dd
+
+
 
 ## Central storage (IMAP4)
 
