@@ -59,7 +59,7 @@ subset of the supported commands.
 
 # Message Transport
 
-![Message transport over the Internet](immp-delivery.png)
+![Message transport over the Internet](images/immp-delivery.png)
 
 # Features
 
@@ -223,7 +223,7 @@ only used for key derivation.
 > ordered by the server. Another option would be to fall back on a simpler
 > scheme that allows for server-side hashed passwords.
 
-![Authenticatioon with Shared Secret](auth-secret.png)
+![Authenticatioon with Shared Secret](images/auth-secret.png)
 
 For **IMMP 1.0** H and K are defined as:
 
