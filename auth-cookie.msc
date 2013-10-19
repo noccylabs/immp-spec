@@ -1,0 +1,13 @@
+msc {
+  client,server;
+  --- [ label="username: alice" ];
+  --- [ label="password: 4wonder1and#" ];
+  client->server [ label="username" ];
+  --- [ label="n1: nounce 1" ];
+  --- [ label="n2: sounce 2" ];
+  --- [ label="ps: saved password hash" ];
+  server->client [ label="n1,n2" ];
+  --- [ label="key: K(H(p),n1,n2)" ];
+  client->server [ label="key" ];
+  --- [ label="keycheck: K(ps,n1,n2)" ];
+}

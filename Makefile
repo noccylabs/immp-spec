@@ -1,6 +1,10 @@
+# Input file (markdown)
 IN=immp-draft.md
+# Output file (pdf)
 OUT=immp-draft.pdf
-OPTS=--toc --number-sections --normalize --smart -V geometry="margin=1in" --latex-engine=xelatex
+# MSC-files (will be converted to PDF)
+IMGMSC=auth-cookie.msc auth-secret.msc
+# DOT-files (will be converted to PDF)
+IMGDOT=immp-delivery.dot
 
-$(OUT): $(IN)
-	pandoc $(OPTS) $(IN) -o $(OUT) 
+include Makefile.pd

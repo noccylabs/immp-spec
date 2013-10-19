@@ -1,0 +1,7 @@
+digraph transport {
+    sender -> senderdomain -> proxydomain -> recipientdomain -> recipient;
+    sender [shape=box, label="IMMP Client\n(Sender)"];
+    recipient [shape=box, label="IMMP Client\n(Recipient)"];
+    {rank=same; sender recipient}
+    {rank=same; senderdomain proxydomain recipientdomain}
+}

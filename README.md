@@ -13,6 +13,17 @@ later as an afterthought.
 This document proposes a new standard for sending and receiving e-mail on the
 Internet; IMMP.
 
+## Notes on the Makefile
+
+To add a .dot or .msc image to the draft, add an image link to the markdown
+having a .pdf extension. 
+
+      ![My Image](file-from-dot.png)
+
+Then add the source file name to the appropriate line in the Makefile:
+
+      IMGDOT=... file-from-dot.dot
+
 ## Join the development process
 
 Use the issue tracker, fork, and send us your pull requests. Who better to help

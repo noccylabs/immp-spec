@@ -47,15 +47,19 @@ The following points are key to the design of the protocol:
  * The protocol should authenticate originating domains, while allowing the sender
    to remain anonymous.
 
-# The Protocol Phases
+# The Protocol States
 
-The protocol is divided up into a number of phases, each allowing a specific
+The protocol is divided up into a number of phases, or states, each allowing a specific
 subset of the supported commands.
 
 1. **Unencrypted** - In this phase only commands to upgrade the transport are allowed. No messages can be delivered, and no authentication can be made.
 2. **Unauthenticated** - In this phase only authentication commands (local users as well as remote cookies) or push-events are allowed.
 3. **Local Authenticated** - can access mailboxes and send mail.
 4. **Remotely Authenticated** - Can deliver mail to local mailboxes.
+
+# Message Transport
+
+![Message transport over the Internet](immp-delivery.png)
 
 # Features
 
@@ -219,15 +223,7 @@ only used for key derivation.
 > ordered by the server. Another option would be to fall back on a simpler
 > scheme that allows for server-side hashed passwords.
 
-~~~~
-  ---- CLIENT --------------               ---- SERVER --------------------
-                               username
-   username: alice          - - - - - - - >   n1: randomstring1
-   password: 4wonder1and#      n1,n2          n2: random2
-                            < - - - - - - -   ps: saved password hash
-   key: K(H(p),n1,n2)           key           keycheck: K(ps,n1,n2)
-                            - - - - - - - >   if (key==keycheck) ...
-~~~~
+![Authenticatioon with Shared Secret](auth-secret.png)
 
 For **IMMP 1.0** H and K are defined as:
 
@@ -242,7 +238,7 @@ Any command can be pipelined, thus allowing for example several attachments
 to be added at the same time issuing `AS xxxx DATA ...` rather than just
 `DATA ...`.
 
-# Commands
+## Commands
 
 Commands come in the form of one or more keywords, followed by zero or more
 parameters or switches:
@@ -284,6 +280,12 @@ parameters or switches:
 
 ## Push Messages
 
+Push-messages place a central role in IMMP. E-mail has become the current provider of web-centered push-notifications, albeit its shortcomings and quirks. IMMP aims to fix this problem by allowing the transport of both messages and notifications.
+
+Notifications here are simplified messages, with the body reduced to a single data block.
+
+## Blacklisting: In Case Of Spam
+
 ## Status Codes
 
  * `1xx` is informative
@@ -317,6 +319,8 @@ parameters or switches:
  * `302` Shared secret authentication request initiated
  * `303` Shared secret nounces: n1=**nounce1** n2=**nounce2**
  * `380` Trying to subscribe
+
+\newpage
 
 # States
 
@@ -381,6 +385,8 @@ And authentication with a shared secret:
  S:  f9ca: 250 
 ~~~~
 
+\newpage
+
 # Commands
 
 The commands are designed to be obvious and easily readable.
@@ -405,11 +411,6 @@ The commands are designed to be obvious and easily readable.
 
 ~~~~
     AUTH COOKIE <cookie> <issuer>
-~~~~
-
->> *or*
-
-~~~~
     AUTH SECRET <account> [<devicename>]
 ~~~~
 
@@ -465,9 +466,9 @@ Deliver a message to a mailbox.
 
 **Notes:**
 
-> Upon receiving this command the server will aounce it being ready to receive the
-> message, or indicate an error if the message can not be delivered. The client
-> should then go on and send the message as a data block:
+Upon receiving this command the server will aounce it being ready to receive the
+message, or indicate an error if the message can not be delivered. The client
+should then go on and send the message as a data block:
 
 ~~~~
     C:  DELIVER TO noccy+analytics@noccylabs.info +IMPORTANT +MULTIPART
@@ -513,12 +514,7 @@ To unsubscribe use the `UNSUBSCRIBE` command.
 
 ~~~~
     SUBSCRIBE TO feed@domain
-~~~~
-
-> *or*
-
-~~~~
-    SUBSCRIBE
+    SUBSCRIBE LIST
 ~~~~
 
 **Example:**
@@ -527,12 +523,14 @@ To unsubscribe use the `UNSUBSCRIBE` command.
     C:  SUBSCRIBE TO noccylabs/immp-spec@github.com
     S:  380 Subscribing to publisher
     S:  280 Subscribed to: Notifications for noccylabs/immp-spec
-    C:  SUBSCRIBE
+    C:  SUBSCRIBE LIST
     S:  281 33af50bc-4841-4426-b27f-793186b52171 noccylabs/immp-spec
     S:  282 1 subscriptions.
 ~~~~
 
 ## SET command
+
+### SET GLOBAL command
 
 ## UNSUBSCRIBE command
 

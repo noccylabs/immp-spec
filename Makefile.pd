@@ -1,0 +1,21 @@
+PD_OPTS=--toc --number-sections --normalize --smart -V geometry="margin=1in" --latex-engine=xelatex
+
+IMAGES=$(IMGMSC:.msc=.png) $(IMGDOT:.dot=.png)
+
+.PHONY: all clean
+
+all: $(OUT)
+
+clean:
+	rm -rf $(OUT) $(IMAGES)
+
+$(OUT): $(IN) $(IMAGES)
+	pandoc $(PD_OPTS) $(IN) -o $(OUT) 
+
+%.png: %.msc
+	mscgen -T png -o $@ -i $<
+
+%.png: %.dot
+	dot -Tpng -o$@ $<
+	convert $@ -density 175 -units PixelsPerInch $@
+
