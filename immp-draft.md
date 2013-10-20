@@ -148,6 +148,10 @@ correspondence.
 
 ## Message Delivery (SMTP)
 
+The same port and protocol that is used to read and manage the mailboxes is also used to deliver messages to mailboxes. This provides a huge advantage in confiugration and management.
+
+Additionally, filtering can be implemented as is currently for SMTP, implementing heuristic or other analysis of messages.
+
 ## Publish-Subscribe Events (XMPP)
 
 In this concept borrowed from XMPP, messages and push-notifications can be
@@ -237,6 +241,10 @@ For **IMMP 1.0** H and K are defined as:
 Any command can be pipelined, thus allowing for example several attachments
 to be added at the same time issuing `AS xxxx DATA ...` rather than just
 `DATA ...`.
+
+By chaining commands using semicolons, it would be possible to initiate several downloads at once, each in its own pipeline.
+
+![Pipelined session](images/pipelines.png)
 
 ## Commands
 

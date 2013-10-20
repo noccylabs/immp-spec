@@ -1,0 +1,14 @@
+msc {
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20;
+    
+    1 box 1 [ label="Upgrade", textbgcolor="#FF8888" ],
+    2 box 2 [ label="Authenticate", textbgcolor="#FFAA88" ],
+    3 box 3 [ label="Mailbox Index", textbgcolor="#88FF88" ],
+    4 box 8 [ label="AS 1 fetch..., AS 2 fetch ...", textbgcolor="#AAAACC" ],
+    9 box 13 [ label="Other commands...", textbgcolor="#88FF88" ];
+    5 box 9 [ label="Pipelined fetch #1", textbgcolor="#CCCCFF" ];
+    5 box 12 [ label="Pipelined fetch #2", textbgcolor="#CCCCFF" ];
+    5 box 18 [ label="Pipelined fetch #3", textbgcolor="#CCCCFF" ];
+    5 box 9 [ label="Pipelined fetch #4", textbgcolor="#CCCCFF" ];
+    5 box 11 [ label="Pipelined fetch #5", textbgcolor="#CCCCFF" ];
+}
