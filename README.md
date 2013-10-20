@@ -1,9 +1,4 @@
-immp-spec
-=========
-
-IMMP: Internet Mail and Messaging Protocol - Specification and Draft
-
-## Abstract
+# IMMP: Internet Mail and Messaging Protocol - Specification and Draft
 
 The protocols that power Internet mail today are ancient, devised back in the
 days long before security was a serious issue they lack in a number of aspects,
@@ -12,6 +7,11 @@ later as an afterthought.
 
 This document proposes a new standard for sending and receiving e-mail on the
 Internet; IMMP.
+
+## Notes on editing
+
+Don't edit the .md file in the root, but rather the appropriate section in the
+`spec/` folder. The `Makefile` regenerates the `immp-*.md` file as needed.
 
 ## Notes on the Makefile
 

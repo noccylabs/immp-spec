@@ -9,7 +9,8 @@ all: $(OUT)
 clean:
 	rm -rf $(OUT) $(IMAGES)
 
-$(OUT): $(IN) $(IMAGES)
+$(OUT): spec/*.md $(IMAGES)
+	tools/build.sh > $(IN)
 	pandoc $(PD_OPTS) $(IN) -o $(OUT) 
 
 %.png: %.msc
