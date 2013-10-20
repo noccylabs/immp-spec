@@ -29,8 +29,8 @@
 
 ## 3xx codes
 
- * `301` Cookie authentiation initiated
+ * `301` Cookie authentication initiated
  * `302` Shared secret authentication request initiated
- * `303` Shared secret nounces: n1=**nounce1** n2=**nounce2**
+ * `303` Shared secret nonces: n1=**nonce1** n2=**nonce2**
  * `380` Trying to subscribe
 

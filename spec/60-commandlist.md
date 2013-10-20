@@ -47,13 +47,13 @@ Transfers a data block from the client to the server.
 **Syntax:**
 
 ~~~~
-    DATA [NAME name] [TYPE mimetype] [LENGTH size] [+BASE64] [+CONTENT]
+    DATA [NAME name] [TYPE mime-type] [LENGTH size] [+BASE64] [+CONTENT]
 ~~~~
 
 **Parameters:**
 
  * *name* - The name of the data block, f.ex. "image.jpg".
- * *mimetype* - The mimetype of the data block, f.ex. "image/jpeg".
+ * *mime-type* - The mime-type of the data block, f.ex. "image/jpeg".
  * `LENGTH` defines the length of the content if present.
  * `+BASE64` indicates that the data is base64-encoded.
  * `+CONTENT` indicates that this is the content data block of the message.
@@ -79,7 +79,7 @@ Deliver a message to a mailbox.
 
 **Notes:**
 
-Upon receiving this command the server will aounce it being ready to receive the
+Upon receiving this command the server will announce it being ready to receive the
 message, or indicate an error if the message can not be delivered. The client
 should then go on and send the message as a data block:
 

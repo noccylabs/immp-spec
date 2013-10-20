@@ -36,9 +36,9 @@ to bypass the inbox, and for that the message can be sent as a push message.
 
 #### Scenario 2. Notifications
 
-Servers, SANs, NASes, and other network devices often report conditions and
-events by mail. With IMMP these could be handled separately from other business
-correspondence.
+ * Servers, SANs, NASes, and other network devices often report conditions and
+   events by mail. With IMMP these could be handled separately from other business
+   correspondence.
 
 ## Message Delivery (SMTP)
 
@@ -70,7 +70,7 @@ any current subscriptions.
 
 When a website wishes to reach out to its subscribers it turns the stake. The
 message is pushed to each of the subscribers, which confirm its origin and the
-presence of the subcription, thus defeating a bit of unsolicited e-mailing by
+presence of the subscription, thus defeating a bit of unsolicited e-mailing by
 flagging the real ones.
 
 ~~~~
@@ -117,11 +117,11 @@ only used for key derivation.
 
 > ***CV:*** This lacks in several aspects; first of all the passwords can be
 > compromised and used to authenticate as the user. Better would be to use
-> one of the nounce values as the salt, and have the user salt his copy as
+> one of the nonce values as the salt, and have the user salt his copy as
 > ordered by the server. Another option would be to fall back on a simpler
 > scheme that allows for server-side hashed passwords.
 
-![Authenticatioon with Shared Secret](images/auth-secret.png)
+![Authentication with Shared Secret](images/auth-secret.png)
 
 For **IMMP 1.0** H and K are defined as:
 
@@ -172,7 +172,7 @@ parameters or switches:
 ## Responses
 
 ~~~~
-  [ pipeline ": "] statuscode ["-"] " " message "\n"
+  [ pipeline ": "] status-code ["-"] " " message "\n"
        |                |       |           |      '-- Ends with newline
        |                |       |           '-- The message
        |                |       '-------- Dash for continuation

@@ -1,7 +1,7 @@
 ## IMIDs
 
 IMID stands for Internet Mail (or Messaging) ID. Unlike e-mail addresses, IMIDs
-can have subnodes. For example:
+can have sub-nodes. For example:
 
 ~~~~
   domain.com

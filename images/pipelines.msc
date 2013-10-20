@@ -4,8 +4,8 @@ msc {
     1 box 1 [ label="Upgrade", textbgcolor="#FF8888" ],
     2 box 2 [ label="Authenticate", textbgcolor="#FFAA88" ],
     3 box 3 [ label="Mailbox Index", textbgcolor="#88FF88" ],
-    4 box 8 [ label="AS 1 fetch..., AS 2 fetch ...", textbgcolor="#AAAACC" ],
-    9 box 13 [ label="Other commands...", textbgcolor="#88FF88" ];
+    4 box 6 [ label="AS 1 fetch...; AS 2 fetch ...; ...", textbgcolor="#AAAACC" ],
+    7 box 13 [ label="Other commands...", textbgcolor="#88FF88" ];
     5 box 9 [ label="Pipelined fetch #1", textbgcolor="#CCCCFF" ];
     5 box 12 [ label="Pipelined fetch #2", textbgcolor="#CCCCFF" ];
     5 box 18 [ label="Pipelined fetch #3", textbgcolor="#CCCCFF" ];

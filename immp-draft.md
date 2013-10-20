@@ -31,7 +31,7 @@ This draft is maintained by NoccyLabs on GitHub:
 
  * The term *e-mail* is used throughout this document to reference the implementation specified in this draft unless otherwise specified.
 
-> ***CV*** Maybe it would be appropriate to use *e-mail* for the old-school mail, and *i-mail* for "internet mail"? This would also indicate the paradigm change introduced by this prodocol.
+> ***CV*** Maybe it would be appropriate to use *e-mail* for the old-school mail, and *i-mail* for "Internet mail"? This would also indicate the paradigm change introduced by this protocol.
 
  * In examples, `S:` is used to indicate a response from the server while `C:` indicates data sent by the client.
 
@@ -40,19 +40,19 @@ This draft is maintained by NoccyLabs on GitHub:
  * *mailbox* is a storage location for folders and messages.
  * *account* is a primary mailbox associated with login credentials.
  * *message* is one or more pieces of *data* with at least one *content* part.
- * *data* is a message chunk, such as the content in HTML or MarkDown format, an image or an attachment.
+ * *data* is a message chunk, such as the content in HTML or Markdown format, an image or an attachment.
 
 ## Design Considerations
 
 The following points are key to the design of the protocol:
 
  * All transport of messages or user information requires transport encryption.
- * The protocol must be plaintext and easy to follow.
+ * The protocol must be plain-text and easy to follow.
  * The protocol must fill the role of the three main protocols in use today,
    namely SMTP for transport, and POP3/IMAP for retrieval/storage.
  * The protocol must not be immediately backward compatible with the previously
    mentioned protocols, for the sole reason of not compromising its integrity by
-   allowing one link of the chain to fallback on insecure transports.
+   allowing one link of the chain to fall back on insecure transports.
  * The protocol should provide a transport for high-importance push-events from
    previously approved source.
  * The protocol should authenticate originating domains, while allowing the sender
@@ -99,9 +99,9 @@ to bypass the inbox, and for that the message can be sent as a push message.
 
 #### Scenario 2. Notifications
 
-Servers, SANs, NASes, and other network devices often report conditions and
-events by mail. With IMMP these could be handled separately from other business
-correspondence.
+ * Servers, SANs, NASes, and other network devices often report conditions and
+   events by mail. With IMMP these could be handled separately from other business
+   correspondence.
 
 ## Message Delivery (SMTP)
 
@@ -133,7 +133,7 @@ any current subscriptions.
 
 When a website wishes to reach out to its subscribers it turns the stake. The
 message is pushed to each of the subscribers, which confirm its origin and the
-presence of the subcription, thus defeating a bit of unsolicited e-mailing by
+presence of the subscription, thus defeating a bit of unsolicited e-mailing by
 flagging the real ones.
 
 ~~~~
@@ -180,11 +180,11 @@ only used for key derivation.
 
 > ***CV:*** This lacks in several aspects; first of all the passwords can be
 > compromised and used to authenticate as the user. Better would be to use
-> one of the nounce values as the salt, and have the user salt his copy as
+> one of the nonce values as the salt, and have the user salt his copy as
 > ordered by the server. Another option would be to fall back on a simpler
 > scheme that allows for server-side hashed passwords.
 
-![Authenticatioon with Shared Secret](images/auth-secret.png)
+![Authentication with Shared Secret](images/auth-secret.png)
 
 For **IMMP 1.0** H and K are defined as:
 
@@ -235,7 +235,7 @@ parameters or switches:
 ## Responses
 
 ~~~~
-  [ pipeline ": "] statuscode ["-"] " " message "\n"
+  [ pipeline ": "] status-code ["-"] " " message "\n"
        |                |       |           |      '-- Ends with newline
        |                |       |           '-- The message
        |                |       '-------- Dash for continuation
@@ -264,7 +264,7 @@ Notifications here are simplified messages, with the body reduced to a single da
 ## IMIDs
 
 IMID stands for Internet Mail (or Messaging) ID. Unlike e-mail addresses, IMIDs
-can have subnodes. For example:
+can have sub-nodes. For example:
 
 ~~~~
   domain.com
@@ -308,6 +308,32 @@ In this example the full URI to the first message would be:
 
       alice@domain.com/INBOX#619b982c-f9b4-4263-bbc7-755afc7710dd
 
+
+
+
+## Using JSON
+
+JSON (JavaScript Object Notation) is a portable and well proven format for encapsulating structured data. Therefore it makes sense to include it in the protocol to make it easier for the clients to parse the data.
+
+To enable JSON output, provide `+JSON` to a function that supports it. For example:
+
+~~~~
+  C:  FETCH alice@domain.com/INBOX#74d273d2-15c6-4420-81c1-1ae7edbcf3fe +JSON +PRETTY
+  S:  ??? Message follows (Pretty Print)
+  S:  {
+  S:    'envelope': {
+  S:      'from': 'bob@domain.com',
+  S:      'to': 'alice@domain.com',
+  S:      'received': {
+  S:      } 
+  S:    },
+  S:    'parts': [
+  S:      { 'id':'body', 'class':'content', 'type':'text/html', 'length':1394, 'encoding':'base64', 'data':'...' },
+  S:      { 'id':'img_logo', 'type':'image/png', 'length':16354, 'encoding':'base64', 'data':'...' }
+  S:    ]
+  S:  }
+  S:  ...
+~~~~
 
 
 
@@ -379,7 +405,7 @@ parameters or switches:
 ## Responses
 
 ~~~~
-  [ pipeline ": "] statuscode ["-"] " " message "\n"
+  [ pipeline ": "] status-code ["-"] " " message "\n"
        |                |       |           |      '-- Ends with newline
        |                |       |           '-- The message
        |                |       '-------- Dash for continuation
@@ -501,13 +527,13 @@ Transfers a data block from the client to the server.
 **Syntax:**
 
 ~~~~
-    DATA [NAME name] [TYPE mimetype] [LENGTH size] [+BASE64] [+CONTENT]
+    DATA [NAME name] [TYPE mime-type] [LENGTH size] [+BASE64] [+CONTENT]
 ~~~~
 
 **Parameters:**
 
  * *name* - The name of the data block, f.ex. "image.jpg".
- * *mimetype* - The mimetype of the data block, f.ex. "image/jpeg".
+ * *mime-type* - The mime-type of the data block, f.ex. "image/jpeg".
  * `LENGTH` defines the length of the content if present.
  * `+BASE64` indicates that the data is base64-encoded.
  * `+CONTENT` indicates that this is the content data block of the message.
@@ -533,7 +559,7 @@ Deliver a message to a mailbox.
 
 **Notes:**
 
-Upon receiving this command the server will aounce it being ready to receive the
+Upon receiving this command the server will announce it being ready to receive the
 message, or indicate an error if the message can not be delivered. The client
 should then go on and send the message as a data block:
 
@@ -636,9 +662,9 @@ Removes a subscription
 
 ## 3xx codes
 
- * `301` Cookie authentiation initiated
+ * `301` Cookie authentication initiated
  * `302` Shared secret authentication request initiated
- * `303` Shared secret nounces: n1=**nounce1** n2=**nounce2**
+ * `303` Shared secret nonces: n1=**nonce1** n2=**nonce2**
  * `380` Trying to subscribe
 
 

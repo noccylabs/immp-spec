@@ -34,7 +34,7 @@ parameters or switches:
 ## Responses
 
 ~~~~
-  [ pipeline ": "] statuscode ["-"] " " message "\n"
+  [ pipeline ": "] status-code ["-"] " " message "\n"
        |                |       |           |      '-- Ends with newline
        |                |       |           '-- The message
        |                |       '-------- Dash for continuation
