@@ -61,6 +61,15 @@ The following points are key to the design of the protocol:
 
 
 
+## Open Questions / To Do
+
+ * Are we doing everything possible to ensure transport security between endpoints? Short of using threats there is nothing we can do to make sure that a message is only ready by the recipient.
+
+> ***CV*** It would make sense to include PGP natively in the specification as a requirements before transporting the message.
+
+ * Are we doing everything possible to ensure security for the user? Are we covering any possible exploitation paths that we are creating?
+
+
 \newpage
 
 # Features
@@ -73,21 +82,15 @@ IMIDs are much more flexible, and can use a uniform URI system to reference mail
 
 ### ...and Shared storage
 
-Several users belonging to a group could share a mailbox, f.ex. 
-`helpdesk@domain.com`, with each of them having their own mailboxes
-as `helpdesk/alice@domain.com` and `helpdesk/bob@domain.com`.
+Several users belonging to a group could share a mailbox, f.ex. `helpdesk@domain.com`, with each of them having their own mailboxes as `helpdesk/alice@domain.com` and `helpdesk/bob@domain.com`. The accounts can thus link to more than one mailbox.
 
 ### ...or Temporary storage (POP3)
 
-For automated services, the ability to download messages in a fashion
-similar to POP3 this would be beneficial for server storage space as
-well as bandwidth and management costs.
+For automated services, the ability to download messages in a fashion similar to POP3 this would be beneficial for server storage space as well as bandwidth and management costs.
 
 ### ...or Push messages
 
-Sometimes, the purpose of a message is just to request a confirmation, or to
-notify the success or failure of a process. In those cases it is reasonable
-to bypass the inbox, and for that the message can be sent as a push message.
+Sometimes, the purpose of a message is just to request a confirmation, or to notify the success or failure of a process. In those cases it is reasonable to bypass the inbox, and for that the message can be sent as a push message.
 
 #### Scenario 1. E-mail configuration
 
@@ -111,13 +114,10 @@ Additionally, filtering can be implemented as is currently for SMTP, implementin
 
 ## Publish-Subscribe Events (XMPP)
 
-In this concept borrowed from XMPP, messages and push-notifications can be
-subscribed to in a fashion managed by the user. The user can then manage his or
-her subscriptions as desired, and easily unsubscribe from undesired mailing
+In this concept borrowed from XMPP, messages and push-notifications can be subscribed to in a fashion managed by the user. The user can then manage his or her subscriptions as desired, and easily unsubscribe from undesired mailing
 lists.
 
-For this reason, a subscription SHOULD BE able to be initated via a URI handler
-such as this one:
+For this reason, a subscription SHOULD BE able to be initated via a URI handler such as this one:
 
       immp://newsletter/updates@website.com?subscribe
 
@@ -287,12 +287,8 @@ followed by an existing folder name, for example:
    '--JUNK
 ~~~~
 
-Alice could in this case get her mailing list subscriptions (the involuntary kind)
-directed to the `:inbox/Mailinglists` folder by providing her IMID as
-`alice+mailinglists@domain.com`. Servers implementing IMMP MUST respect the folder
-redirections, and websites supporting IMMP MUST respect them for any communication
-but ignore them for any (public) display. Default folders such as INBOX, DRAFTS,
-SENT and JUNK should be excluded from filtering.
+Alice could in this case get her mailing list subscriptions (the involuntary kind) directed to the `:inbox/Mailinglists` folder by providing her IMID as `alice+mailinglists@domain.com`. Servers implementing IMMP MUST respect the folder redirections, and websites supporting IMMP MUST respect them for any communication
+but ignore them for any (public) display. Default folders such as INBOX, DRAFTS, SENT and JUNK should be excluded from filtering.
 
 Messages are references as `user@host/mailbox#messageid`:
 
@@ -308,7 +304,7 @@ In this example the full URI to the first message would be:
 
       alice@domain.com/INBOX#619b982c-f9b4-4263-bbc7-755afc7710dd
 
-
+As messages are identified using UUIDs the same message can exist in several mailbox folders at once.
 
 
 ## Using JSON
@@ -366,6 +362,19 @@ This is a thrilling new use of XMPP as the middleman in delivering messages betw
 
  * **Persistent Connections** - Connections between XMPP-servers are in many cases persistent, especially when between a bigger XMPP service provider and another server. This could be great for IMMP as it would remove the overhead of establishing a connection and upgrading a session. The problem would be if a server upstream would lack encryption. This can however be solved by armoring the message with encryption before sending over an XMPP transport.
  * **Encryption** - Encryption is well defined and readily used to secure XMPP connections already. This adds to the transport security.
+
+
+
+# Messages
+
+## Encapsulation
+
+> ***CV*** *Something PGP-like to ensure only the sender and the recipient can read the message?*
+
+
+## Metadata
+
+
 
 
 

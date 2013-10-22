@@ -10,21 +10,15 @@ IMIDs are much more flexible, and can use a uniform URI system to reference mail
 
 ### ...and Shared storage
 
-Several users belonging to a group could share a mailbox, f.ex. 
-`helpdesk@domain.com`, with each of them having their own mailboxes
-as `helpdesk/alice@domain.com` and `helpdesk/bob@domain.com`.
+Several users belonging to a group could share a mailbox, f.ex. `helpdesk@domain.com`, with each of them having their own mailboxes as `helpdesk/alice@domain.com` and `helpdesk/bob@domain.com`. The accounts can thus link to more than one mailbox.
 
 ### ...or Temporary storage (POP3)
 
-For automated services, the ability to download messages in a fashion
-similar to POP3 this would be beneficial for server storage space as
-well as bandwidth and management costs.
+For automated services, the ability to download messages in a fashion similar to POP3 this would be beneficial for server storage space as well as bandwidth and management costs.
 
 ### ...or Push messages
 
-Sometimes, the purpose of a message is just to request a confirmation, or to
-notify the success or failure of a process. In those cases it is reasonable
-to bypass the inbox, and for that the message can be sent as a push message.
+Sometimes, the purpose of a message is just to request a confirmation, or to notify the success or failure of a process. In those cases it is reasonable to bypass the inbox, and for that the message can be sent as a push message.
 
 #### Scenario 1. E-mail configuration
 
@@ -48,13 +42,10 @@ Additionally, filtering can be implemented as is currently for SMTP, implementin
 
 ## Publish-Subscribe Events (XMPP)
 
-In this concept borrowed from XMPP, messages and push-notifications can be
-subscribed to in a fashion managed by the user. The user can then manage his or
-her subscriptions as desired, and easily unsubscribe from undesired mailing
+In this concept borrowed from XMPP, messages and push-notifications can be subscribed to in a fashion managed by the user. The user can then manage his or her subscriptions as desired, and easily unsubscribe from undesired mailing
 lists.
 
-For this reason, a subscription SHOULD BE able to be initated via a URI handler
-such as this one:
+For this reason, a subscription SHOULD BE able to be initated via a URI handler such as this one:
 
       immp://newsletter/updates@website.com?subscribe
 
