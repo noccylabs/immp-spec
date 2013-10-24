@@ -1,6 +1,6 @@
 ## Message Transport
 
-![Message transport over the Internet](images/immp-delivery.png)
+![Message transport over the Internet](images/immp-delivery.dot)
 
 ### Over TCP
 

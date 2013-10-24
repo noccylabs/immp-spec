@@ -1,6 +1,7 @@
-PD_OPTS=--toc --number-sections --normalize --smart -V geometry="margin=1in" --latex-engine=xelatex
+PD_OPTS=--toc --number-sections --normalize --smart -V geometry="margin=1in" --latex-engine=xelatex -f Markdown
 
-IMAGES=$(IMGMSC:.msc=.png) $(IMGDOT:.dot=.png)
+# IMAGES=$(IMGMSC:.msc=.png) $(IMGDOT:.dot=.png)
+IMAGES=$(shell tools/mdimages.php -i $(IN) -l -g)
 
 .PHONY: all clean
 
@@ -9,9 +10,13 @@ all: $(OUT)
 clean:
 	rm -rf $(OUT) $(IMAGES)
 
-$(OUT): spec/*.md $(IMAGES)
+builddoc: spec/*.md
 	tools/build.sh > $(IN)
-	pandoc $(PD_OPTS) $(IN) -o $(OUT) 
+
+images: $(IMAGES)
+
+$(OUT): builddoc images
+	tools/mdimages.php -i $(IN) -r | pandoc $(PD_OPTS) -o $(OUT)
 
 %.png: %.msc
 	mscgen -T png -o $@ -i $<

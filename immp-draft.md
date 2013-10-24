@@ -184,7 +184,7 @@ only used for key derivation.
 > ordered by the server. Another option would be to fall back on a simpler
 > scheme that allows for server-side hashed passwords.
 
-![Authentication with Shared Secret](images/auth-secret.png)
+![Authentication with Shared Secret](images/auth-secret.msc)
 
 For **IMMP 1.0** H and K are defined as:
 
@@ -201,7 +201,7 @@ to be added at the same time issuing `AS xxxx DATA ...` rather than just
 
 By chaining commands using semicolons, it would be possible to initiate several downloads at once, each in its own pipeline.
 
-![Pipelined session](images/pipelines.png)
+![Pipelined session](images/pipelines.msc)
 
 ## Commands
 
@@ -348,7 +348,7 @@ subset of the supported commands.
 
 ## Message Transport
 
-![Message transport over the Internet](images/immp-delivery.png)
+![Message transport over the Internet](images/immp-delivery.dot)
 
 ### Over TCP
 

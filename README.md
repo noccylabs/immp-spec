@@ -15,14 +15,13 @@ Don't edit the .md file in the root, but rather the appropriate section in the
 
 ## Notes on the Makefile
 
-To add a .dot or .msc image to the draft, add an image link to the markdown
-having a .pdf extension. 
+To add a .dot or .msc image to the draft, add it as a regular image link. The
+makefile will ensure that the images are properly generated.
 
-      ![My Image](file-from-dot.png)
+      ![My Image](file.dot)
 
-Then add the source file name to the appropriate line in the Makefile:
-
-      IMGDOT=... file-from-dot.dot
+Note: This is done by the `tools/mdimages.php` script, which requires php5-cli
+to be installed (version 5.4 min).
 
 ## Join the development process
 
