@@ -27,6 +27,8 @@ if (isset($opt["i"])) {
 $match = null;
 // Match image links (thanks Bryan!)
 $_generated = isset($opt["g"]);
+$s_in = [];
+$s_out = [];
 if (preg_match_all('/\!\[.*\]\s?\(([^\s)]*)/i',$content,$match)) {
     foreach($match[1] as $file) {
         // Output them for inclusion elsewhere

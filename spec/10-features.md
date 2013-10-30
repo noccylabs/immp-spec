@@ -1,5 +1,3 @@
-\newpage
-
 # Features
 
 ## IMIDs instead of E-Mail Addresses
@@ -23,16 +21,13 @@ Sometimes, the purpose of a message is just to request a confirmation, or to not
 #### Scenario 1. E-mail configuration
 
  1. Alice goes to Website.com, and registers a new account.
- 2. In order to validate Alice's e-mail address Website.com sends a
-    push-notification to Alice's address containing a configuration link.
+ 2. In order to validate Alice's e-mail address Website.com sends a push-notification to Alice's address containing a configuration link.
  3. Alice receives this notification, and can click "Confirm" in the desktop
     notification she is presented with.
 
 #### Scenario 2. Notifications
 
- * Servers, SANs, NASes, and other network devices often report conditions and
-   events by mail. With IMMP these could be handled separately from other business
-   correspondence.
+ * Servers, SANs, NASes, and other network devices often report conditions and events by mail. With IMMP these could be handled separately from other business correspondence.
 
 ## Message Delivery (SMTP)
 
@@ -42,16 +37,13 @@ Additionally, filtering can be implemented as is currently for SMTP, implementin
 
 ## Publish-Subscribe Events (XMPP)
 
-In this concept borrowed from XMPP, messages and push-notifications can be subscribed to in a fashion managed by the user. The user can then manage his or her subscriptions as desired, and easily unsubscribe from undesired mailing
-lists.
+In this concept borrowed from XMPP, messages and push-notifications can be subscribed to in a fashion managed by the user. The user can then manage his or her subscriptions as desired, and easily unsubscribe from undesired mailing lists.
 
 For this reason, a subscription SHOULD BE able to be initated via a URI handler such as this one:
 
       immp://newsletter/updates@website.com?subscribe
 
-Each subscription is assigned a unique identifier, and metadata is fetched as
-the subscription is created. This allows the user to easily get an overview of
-any current subscriptions.
+Each subscription is assigned a unique identifier, and metadata is fetched as the subscription is created. This allows the user to easily get an overview of any current subscriptions.
 
 | UUID   | IMID^[Internet Messaging ID] | Node                   | Title                    |
 |:-------|:-----------------------------|:-----------------------|:-------------------------|
@@ -59,58 +51,37 @@ any current subscriptions.
 
 ### Publishing Events
 
-When a website wishes to reach out to its subscribers it turns the stake. The
-message is pushed to each of the subscribers, which confirm its origin and the
-presence of the subscription, thus defeating a bit of unsolicited e-mailing by
-flagging the real ones.
+When a website wishes to reach out to its subscribers it turns the stake. The message is pushed to each of the subscribers, which confirm its origin and the presence of the subscription, thus defeating a bit of unsolicited e-mailing by flagging the real ones.
 
 ~~~~
    C:  PUSH TO noccy@noccylabs.info FROM newsletter@website.com/updates +IMPORTANT 
-   S:  
+   S:
 ~~~~
 
 
 
 ## Intrinsic Security
 
-Encryption is an integral part of the protocol, as it does not under any
-circumstances allow any information exchange to take place before the session
-has been secured.
+Encryption is an integral part of the protocol, as it does not under any circumstances allow any information exchange to take place before the session has been secured.
 
-The session begins by the server indicating what methods it can use to upgrade
-the connections.
+The session begins by the server indicating what methods it can use to upgrade the connections.
 
 The proposed methods are:
 
  * `SSLv3`
  * `TLS`
 
-The key fingerprints should be compared to previously seen ones when upgrading
-the connection. Messages that are flagged as `+SECURE` MUST NOT be delivered
-over a connection where the fingerprint failed. The administrator always be
-notified, and the server should retry delivery in 5 minutes and then according
-to a defined schedule.
+The key fingerprints should be compared to previously seen ones when upgrading the connection. Messages that are flagged as `+SECURE` MUST NOT be delivered over a connection where the fingerprint failed. The administrator always be notified, and the server should retry delivery in 5 minutes and then according to a defined schedule.
 
 ### No Plain-text passwords
 
-Passwords MUST BE saved using the key derivation algorithm specified in
-this draft. The output from the KDA is the effective password for the
-account.
+Passwords MUST BE saved using the key derivation algorithm specified in this draft. The output from the KDA is the effective password for the account.
 
-Upon the client requesting authentication using a shared secret (the generated 
-password) the server sends over two nounces, that are used by both the client
-and the server to calculate a key. The client sends its calculated key to the
-server, and the server compares the key. If the keys match, the user is logged
-in.
+Upon the client requesting authentication using a shared secret (the generated  password) the server sends over two nounces, that are used by both the client and the server to calculate a key. The client sends its calculated key to the server, and the server compares the key. If the keys match, the user is logged in.
 
-This way plain-text passwords are never transferred in the clear, and are
-only used for key derivation.
+This way plain-text passwords are never transferred in the clear, and are only used for key derivation.
 
-> ***CV:*** This lacks in several aspects; first of all the passwords can be
-> compromised and used to authenticate as the user. Better would be to use
-> one of the nonce values as the salt, and have the user salt his copy as
-> ordered by the server. Another option would be to fall back on a simpler
-> scheme that allows for server-side hashed passwords.
+> ***CV:*** This lacks in several aspects; first of all the passwords can be compromised and used to authenticate as the user. Better would be to use one of the nonce values as the salt, and have the user salt his copy as ordered by the server. Another option would be to fall back on a simpler scheme that allows for server-side hashed passwords.
 
 ![Authentication with Shared Secret](images/auth-secret.msc)
 
@@ -133,8 +104,7 @@ By chaining commands using semicolons, it would be possible to initiate several 
 
 ## Commands
 
-Commands come in the form of one or more keywords, followed by zero or more
-parameters or switches:
+Commands come in the form of one or more keywords, followed by zero or more parameters or switches:
 
 ~~~~
   AUTHENTICATE COOKIE cacabeefcacabad0 otherdomain.com
@@ -150,15 +120,12 @@ parameters or switches:
    Pipeline ID
 ~~~~
 
- * Keywords are written in `CAPITAL LETTERS` in this document but the parsers
-   SHOULD NOT be case sensitive when parsing keywords.
+ * Keywords are written in `CAPITAL LETTERS` in this document but the parsers SHOULD NOT be case sensitive when parsing keywords.
  * Words in lower case should be replaced with the appropriate values.
  * Quoted strings should be used verbatim.
  * Parameters only have to be quoted if they contain spaces.
  * Switches enable or disable a certain behavior of the command.
- * Pipelines can be created by prefixing the keyword `AS` followed by the
-   desired pipeline ID to use. All replies for this pipeline will have this ID
-   followed by a colon prefixed to their status codes.
+ * Pipelines can be created by prefixing the keyword `AS` followed by the desired pipeline ID to use. All replies for this pipeline will have this ID followed by a colon prefixed to their status codes.
 
 ## Responses
 

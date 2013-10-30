@@ -1,5 +1,3 @@
-\newpage
-
 # Supported Commands
 
 The commands are designed to be obvious and easily readable.

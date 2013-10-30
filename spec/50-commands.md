@@ -1,5 +1,3 @@
-\newpage
-
 # Commands and Responses
 
 ## Commands

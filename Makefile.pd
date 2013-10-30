@@ -1,22 +1,31 @@
-PD_OPTS=--toc --number-sections --normalize --smart -V geometry="margin=1in" --latex-engine=xelatex -f Markdown
+#PD_OPTS=--toc --number-sections --normalize --smart -V geometry="margin=1in" -f markdown --standalone
+PD_OPTS=--toc --number-sections --standalone
 
 # IMAGES=$(IMGMSC:.msc=.png) $(IMGDOT:.dot=.png)
-IMAGES=$(shell tools/mdimages.php -i $(IN) -l -g)
+IMAGES=$(shell tools/mdimages.php -i $(CACHE) -l -g)
+CACHE=.makedoc.cache
+OUT_MD=$(OUT).md
+OUT_PDF=$(OUT).pdf
 
-.PHONY: all clean
+.PHONY: all clean builddoc images
 
-all: $(OUT)
+all: $(OUT_MD) $(OUT_PDF)
 
 clean:
-	rm -rf $(OUT) $(IMAGES)
+	rm -rf $(OUT_PDF) $(OUT_MD) $(IMAGES)
 
-builddoc: spec/*.md
-	tools/build.sh > $(IN)
+builddoc: $(CACHE)
+
+$(CACHE): spec/*.md
+	tools/build.sh > $(CACHE)
 
 images: $(IMAGES)
 
-$(OUT): builddoc images
-	tools/mdimages.php -i $(IN) -r | pandoc $(PD_OPTS) -o $(OUT)
+$(OUT_MD): builddoc images
+	tools/mdimages.php -i $(CACHE) -r -o $(OUT_MD)
+
+$(OUT_PDF): $(OUT_MD)
+	pandoc $(PD_OPTS) -i $(OUT_MD) -o $(OUT_PDF)
 
 %.png: %.msc
 	mscgen -T png -o $@ -i $<

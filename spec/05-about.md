@@ -1,5 +1,3 @@
-\newpage 
-
 # About this draft
 
 ## Conventions
@@ -25,11 +23,7 @@ The following points are key to the design of the protocol:
  * The protocol must be plain-text and easy to follow.
  * The protocol must fill the role of the three main protocols in use today,
    namely SMTP for transport, and POP3/IMAP for retrieval/storage.
- * The protocol must not be immediately backward compatible with the previously
-   mentioned protocols, for the sole reason of not compromising its integrity by
-   allowing one link of the chain to fall back on insecure transports.
- * The protocol should provide a transport for high-importance push-events from
-   previously approved source.
- * The protocol should authenticate originating domains, while allowing the sender
-   to remain anonymous.
+ * The protocol must not be immediately backward compatible with the previously mentioned protocols, for the sole reason of not compromising its integrity by allowing one link of the chain to fall back on insecure transports.
+ * The protocol should provide a transport for high-importance push-events from previously approved source.
+ * The protocol should authenticate originating domains, while allowing the sender to remain anonymous.
 

@@ -1,4 +1,2 @@
-\newpage
-
 # The protocol
 
