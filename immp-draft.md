@@ -1,4 +1,4 @@
-% Internet Mail and Messaging Protocl
+% Internet Mail and Messaging Protocol
 % C. Vagnetoft (NoccyLabs.info)
 % October 2013
 
@@ -6,7 +6,8 @@
 
 # Abstract
 
-The protocols that power Internet mail today are ancient. Devised back in the days long before security was a serious issue they lack in a number of aspects,
+The protocols that power Internet mail today are ancient, devised back in the
+days long before security was a serious issue they lack in a number of aspects,
 mainly transport encryption and digital signing/encryption which have been added
 later as an afterthought.
 
@@ -21,8 +22,6 @@ This draft is maintained by NoccyLabs on GitHub:
 
 
 
-
-\newpage 
 
 # About this draft
 
@@ -49,13 +48,9 @@ The following points are key to the design of the protocol:
  * The protocol must be plain-text and easy to follow.
  * The protocol must fill the role of the three main protocols in use today,
    namely SMTP for transport, and POP3/IMAP for retrieval/storage.
- * The protocol must not be immediately backward compatible with the previously
-   mentioned protocols, for the sole reason of not compromising its integrity by
-   allowing one link of the chain to fall back on insecure transports.
- * The protocol should provide a transport for high-importance push-events from
-   previously approved source.
- * The protocol should authenticate originating domains, while allowing the sender
-   to remain anonymous.
+ * The protocol must not be immediately backward compatible with the previously mentioned protocols, for the sole reason of not compromising its integrity by allowing one link of the chain to fall back on insecure transports.
+ * The protocol should provide a transport for high-importance push-events from previously approved source.
+ * The protocol should authenticate originating domains, while allowing the sender to remain anonymous.
 
 
 
@@ -63,13 +58,12 @@ The following points are key to the design of the protocol:
 ## Open Questions / To Do
 
  * Are we doing everything possible to ensure transport security between endpoints? Short of using threats there is nothing we can do to make sure that a message is only ready by the recipient.
-
-> ***CV*** It would make sense to include PGP natively in the specification as a requirements before transporting the message.
-
  * Are we doing everything possible to ensure security for the user? Are we covering any possible exploitation paths that we are creating?
+ 
+> ***CV*** It would make sense to include PGP/GPG-support natively in the specification as a requirements before transporting the message.
 
 
-\newpage
+
 
 # Features
 
@@ -94,16 +88,13 @@ Sometimes, the purpose of a message is just to request a confirmation, or to not
 #### Scenario 1. E-mail configuration
 
  1. Alice goes to Website.com, and registers a new account.
- 2. In order to validate Alice's e-mail address Website.com sends a
-    push-notification to Alice's address containing a configuration link.
+ 2. In order to validate Alice's e-mail address Website.com sends a push-notification to Alice's address containing a configuration link.
  3. Alice receives this notification, and can click "Confirm" in the desktop
     notification she is presented with.
 
 #### Scenario 2. Notifications
 
- * Servers, SANs, NASes, and other network devices often report conditions and
-   events by mail. With IMMP these could be handled separately from other business
-   correspondence.
+ * Servers, SANs, NASes, and other network devices often report conditions and events by mail. With IMMP these could be handled separately from other business correspondence.
 
 ## Message Delivery (SMTP)
 
@@ -113,16 +104,13 @@ Additionally, filtering can be implemented as is currently for SMTP, implementin
 
 ## Publish-Subscribe Events (XMPP)
 
-In this concept borrowed from XMPP, messages and push-notifications can be subscribed to in a fashion managed by the user. The user can then manage his or her subscriptions as desired, and easily unsubscribe from undesired mailing
-lists.
+In this concept borrowed from XMPP, messages and push-notifications can be subscribed to in a fashion managed by the user. The user can then manage his or her subscriptions as desired, and easily unsubscribe from undesired mailing lists.
 
 For this reason, a subscription SHOULD BE able to be initated via a URI handler such as this one:
 
       immp://newsletter/updates@website.com?subscribe
 
-Each subscription is assigned a unique identifier, and metadata is fetched as
-the subscription is created. This allows the user to easily get an overview of
-any current subscriptions.
+Each subscription is assigned a unique identifier, and metadata is fetched as the subscription is created. This allows the user to easily get an overview of any current subscriptions.
 
 | UUID   | IMID^[Internet Messaging ID] | Node                   | Title                    |
 |:-------|:-----------------------------|:-----------------------|:-------------------------|
@@ -130,58 +118,37 @@ any current subscriptions.
 
 ### Publishing Events
 
-When a website wishes to reach out to its subscribers it turns the stake. The
-message is pushed to each of the subscribers, which confirm its origin and the
-presence of the subscription, thus defeating a bit of unsolicited e-mailing by
-flagging the real ones.
+When a website wishes to reach out to its subscribers it turns the stake. The message is pushed to each of the subscribers, which confirm its origin and the presence of the subscription, thus defeating a bit of unsolicited e-mailing by flagging the real ones.
 
 ~~~~
    C:  PUSH TO noccy@noccylabs.info FROM newsletter@website.com/updates +IMPORTANT 
-   S:  
+   S:
 ~~~~
 
 
 
 ## Intrinsic Security
 
-Encryption is an integral part of the protocol, as it does not under any
-circumstances allow any information exchange to take place before the session
-has been secured.
+Encryption is an integral part of the protocol, as it does not under any circumstances allow any information exchange to take place before the session has been secured.
 
-The session begins by the server indicating what methods it can use to upgrade
-the connections.
+The session begins by the server indicating what methods it can use to upgrade the connections.
 
 The proposed methods are:
 
  * `SSLv3`
  * `TLS`
 
-The key fingerprints should be compared to previously seen ones when upgrading
-the connection. Messages that are flagged as `+SECURE` MUST NOT be delivered
-over a connection where the fingerprint failed. The administrator always be
-notified, and the server should retry delivery in 5 minutes and then according
-to a defined schedule.
+The key fingerprints should be compared to previously seen ones when upgrading the connection. Messages that are flagged as `+SECURE` MUST NOT be delivered over a connection where the fingerprint failed. The administrator always be notified, and the server should retry delivery in 5 minutes and then according to a defined schedule.
 
 ### No Plain-text passwords
 
-Passwords MUST BE saved using the key derivation algorithm specified in
-this draft. The output from the KDA is the effective password for the
-account.
+Passwords MUST BE saved using the key derivation algorithm specified in this draft. The output from the KDA is the effective password for the account.
 
-Upon the client requesting authentication using a shared secret (the generated 
-password) the server sends over two nounces, that are used by both the client
-and the server to calculate a key. The client sends its calculated key to the
-server, and the server compares the key. If the keys match, the user is logged
-in.
+Upon the client requesting authentication using a shared secret (the generated  password) the server sends over two nounces, that are used by both the client and the server to calculate a key. The client sends its calculated key to the server, and the server compares the key. If the keys match, the user is logged in.
 
-This way plain-text passwords are never transferred in the clear, and are
-only used for key derivation.
+This way plain-text passwords are never transferred in the clear, and are only used for key derivation.
 
-> ***CV:*** This lacks in several aspects; first of all the passwords can be
-> compromised and used to authenticate as the user. Better would be to use
-> one of the nonce values as the salt, and have the user salt his copy as
-> ordered by the server. Another option would be to fall back on a simpler
-> scheme that allows for server-side hashed passwords.
+> ***CV:*** This lacks in several aspects; first of all the passwords can be compromised and used to authenticate as the user. Better would be to use one of the nonce values as the salt, and have the user salt his copy as ordered by the server. Another option would be to fall back on a simpler scheme that allows for server-side hashed passwords.
 
 ![Authentication with Shared Secret](images/auth-secret.png)
 
@@ -204,8 +171,7 @@ By chaining commands using semicolons, it would be possible to initiate several 
 
 ## Commands
 
-Commands come in the form of one or more keywords, followed by zero or more
-parameters or switches:
+Commands come in the form of one or more keywords, followed by zero or more parameters or switches:
 
 ~~~~
   AUTHENTICATE COOKIE cacabeefcacabad0 otherdomain.com
@@ -221,15 +187,12 @@ parameters or switches:
    Pipeline ID
 ~~~~
 
- * Keywords are written in `CAPITAL LETTERS` in this document but the parsers
-   SHOULD NOT be case sensitive when parsing keywords.
+ * Keywords are written in `CAPITAL LETTERS` in this document but the parsers SHOULD NOT be case sensitive when parsing keywords.
  * Words in lower case should be replaced with the appropriate values.
  * Quoted strings should be used verbatim.
  * Parameters only have to be quoted if they contain spaces.
  * Switches enable or disable a certain behavior of the command.
- * Pipelines can be created by prefixing the keyword `AS` followed by the
-   desired pipeline ID to use. All replies for this pipeline will have this ID
-   followed by a colon prefixed to their status codes.
+ * Pipelines can be created by prefixing the keyword `AS` followed by the desired pipeline ID to use. All replies for this pipeline will have this ID followed by a colon prefixed to their status codes.
 
 ## Responses
 
@@ -252,8 +215,6 @@ Notifications here are simplified messages, with the body reduced to a single da
 
 
 
-
-\newpage
 
 # The protocol
 
@@ -366,6 +327,43 @@ This is a thrilling new use of XMPP as the middleman in delivering messages betw
 
 # Messages
 
+Messages in IMMP generally consist of an outer envelope, an inner envelope and the message content. The outer envelope is always unencrypted (not considering the transport encryption) in the message. The inner envelope is encrypted with the reciving servers' public key to guarantee anonymity up until the point that the message is delivered to the recipient.
+
+The outer envelope contains enough information to address the recipient's server. Imagine `alice@adomain.com` sends a message to `bob@bdomain.com`. In this case the outer envelope would be addressed to `bdomain.com` and signed with the private key of `adomain.com`. The inner envelope would be addressed to `bob@bdomain.com` and encrypted with the public key of `bdomain.com`. 
+
+The advantages of this solution includes:
+
+ 1. Verification of the sending domain (which might be different than the delivering servers domain in the case of forwarding or proxies.
+ 2. The final destination exposed in plain text does not point to an account or mailbox, but rather a domain. Only that domain can resolve the mailbox. Thus full anonymity of the sender and the recipient is ensured, even when relaying servers are involved.
+ 3. Messages can not be easily tampered with, and even if they could the outer envelope does not provide enough information to cherrypick a specific message without additional knowledge about the exact circumstances.
+
+## Representation
+
+Message headers are stored as JSON format. Additional compression capabilities can be requested with the `SET` command.
+
+~~~~{.js}
+        {
+            "envelope":{
+                "immp-origin": "adomain.com",
+                "immp-destination": "bdomain.com",
+                "immp-recipient": [
+                    // ...base64-encoded inner envelope(s)...
+                ],
+                "received-from": { 
+                    "domain": "mail.cdomain.com"
+                    "timestamp": "2013-10-29T02:40:28+01:00",
+                },
+                "received-via": [
+                    {
+                        "domain": "mail.cdomain.com",
+                        "timestamp": "2013-10-29T02:40:26+01:00"
+                    }
+                    // ...list of routing servers and timestamps
+                ]
+            }
+        }
+~~~~
+
 ## Encapsulation
 
 > ***CV*** *Something PGP-like to ensure only the sender and the recipient can read the message?*
@@ -373,11 +371,34 @@ This is a thrilling new use of XMPP as the middleman in delivering messages betw
 
 ## Metadata
 
+### Outer Envelope
+
+ * Information on the origin domain
+ * Information on the destination domain
+ * Encrypted inner envelopes with information about the recipients
+ * Routing information (received from, via)
+
+### Inner Envelope
+
+ * Recipient information
+ * Additional metadata
+
+### Message Content
+
+## Requesting compression
+
+Compression is controlled via the setting `compression`.
+
+~~~~
+  C:  SET COMPRESSION
+  S:  xxx-COMPRESSION=NONE
+  S:  xxx NONE, GZIP, BZIP2, XZIP
+  C:  SET COMPRESSION=GZIP
+  S:  xxx COMPRESSION=GZIP
+~~~~
 
 
 
-
-\newpage
 
 # Commands and Responses
 
@@ -485,8 +506,6 @@ And authentication with a shared secret:
 
 
 
-
-\newpage
 
 # Supported Commands
 
@@ -638,8 +657,6 @@ To unsubscribe use the `UNSUBSCRIBE` command.
 Removes a subscription
 
 
-
-\newpage
 
 # List of Status Codes
 
