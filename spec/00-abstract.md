@@ -1,4 +1,4 @@
-% Internet Mail and Messaging Protocl
+% Internet Mail and Messaging Protocol
 % C. Vagnetoft (NoccyLabs.info)
 % October 2013
 

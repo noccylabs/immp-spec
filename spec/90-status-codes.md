@@ -1,5 +1,3 @@
-\newpage
-
 # List of Status Codes
 
  * `1xx` is informative
