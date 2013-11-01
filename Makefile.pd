@@ -25,7 +25,7 @@ $(OUT_MD): builddoc images
 	tools/mdimages.php -i $(CACHE) -r -o $(OUT_MD)
 
 $(OUT_PDF): $(OUT_MD)
-	pandoc $(PD_OPTS) -i $(OUT_MD) -o $(OUT_PDF)
+	pandoc $(PD_OPTS) $(OUT_MD) -o $(OUT_PDF)
 
 %.png: %.msc
 	mscgen -T png -o $@ -i $<
