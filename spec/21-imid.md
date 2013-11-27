@@ -1,17 +1,15 @@
 ## IMIDs
 
-IMID stands for Internet Mail (or Messaging) ID. Unlike e-mail addresses, IMIDs
-can have sub-nodes. For example:
+IMID stands for Internet Mail (or Messaging) ID. To be compatible with XMPP, IMIDs follow the same format with a few specifics. First, look at this JID (Jabber ID) format:
 
-~~~~
-  domain.com
-   |--helpdesk@domain.com
-   |   |--helpdesk/alice@domain.com
-   |   '--helpdesk/bob@domain.com
-   '--admin@domain.com
-~~~~
+      [xmpp:]alice@a.com[/resource]
 
-In a similar fashion, you can direct messages to folders by appending a plus-sign
+Compare to IMID format:
+
+      [imid:]alice@a.com[/mailbox[#message]][?options]
+      [imid:]alice[+mailbox]@a.com
+
+You can direct messages to folders by appending a plus-sign
 followed by an existing folder name, for example:
 
 ~~~~

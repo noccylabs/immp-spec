@@ -46,13 +46,15 @@ The following points are key to the design of the protocol:
 
  * All transport of messages or user information requires transport encryption.
  * The protocol must be plain-text and easy to follow.
- * The protocol must fill the role of the three main protocols in use today,
-   namely SMTP for transport, and POP3/IMAP for retrieval/storage.
+ * The protocol must fill the role of the three main protocols in use today, namely SMTP for transport, and POP3/IMAP for retrieval/storage.
  * The protocol must not be immediately backward compatible with the previously mentioned protocols, for the sole reason of not compromising its integrity by allowing one link of the chain to fall back on insecure transports.
- * The protocol should provide a transport for high-importance push-events from previously approved source.
+ * The protocol should provide a transport for high-importance push-events from previously approved sources, as well as a method to manage the aforementioned approved sources and unapproved messages.
  * The protocol should authenticate originating domains, while allowing the sender to remain anonymous.
+ * The protocol, or more precisely the IMIDs should be compatible with XMPP to provide instant messaging and more.
 
+## Authors
 
+ * **Christopher Vagnetoft** (NoccyLabs)
 
 
 ## Open Questions / To Do
@@ -87,10 +89,9 @@ Sometimes, the purpose of a message is just to request a confirmation, or to not
 
 #### Scenario 1. E-mail configuration
 
- 1. Alice goes to Website.com, and registers a new account.
+ 1. Alice goes to any Website.com supporting IMMP adresses, and registers a new account.
  2. In order to validate Alice's e-mail address Website.com sends a push-notification to Alice's address containing a configuration link.
- 3. Alice receives this notification, and can click "Confirm" in the desktop
-    notification she is presented with.
+ 3. Alice receives this notification, and can click "Confirm" in the desktop notification she is presented with.
 
 #### Scenario 2. Notifications
 
@@ -121,8 +122,8 @@ Each subscription is assigned a unique identifier, and metadata is fetched as th
 When a website wishes to reach out to its subscribers it turns the stake. The message is pushed to each of the subscribers, which confirm its origin and the presence of the subscription, thus defeating a bit of unsolicited e-mailing by flagging the real ones.
 
 ~~~~
-   C:  PUSH TO noccy@noccylabs.info FROM newsletter@website.com/updates +IMPORTANT 
-   S:
+    C:  PUSH TO noccy@noccylabs.info FROM newsletter@website.com/updates +IMPORTANT 
+    S:
 ~~~~
 
 
@@ -146,7 +147,7 @@ Passwords MUST BE saved using the key derivation algorithm specified in this dra
 
 Upon the client requesting authentication using a shared secret (the generated  password) the server sends over two nounces, that are used by both the client and the server to calculate a key. The client sends its calculated key to the server, and the server compares the key. If the keys match, the user is logged in.
 
-This way plain-text passwords are never transferred in the clear, and are only used for key derivation.
+This way plain-text passwords are never transferred in the clear, and are only used for key derivation and furthermore they are additionally hashed with the nonce values, adding to the security. If a breach or other data leak occurs, no plaintext passwords will be accessible unless collisions are found in the KDA.
 
 > ***CV:*** This lacks in several aspects; first of all the passwords can be compromised and used to authenticate as the user. Better would be to use one of the nonce values as the salt, and have the user salt his copy as ordered by the server. Another option would be to fall back on a simpler scheme that allows for server-side hashed passwords.
 
@@ -155,9 +156,7 @@ This way plain-text passwords are never transferred in the clear, and are only u
 For **IMMP 1.0** H and K are defined as:
 
  * *H(p)* is the key derivation algorithm.
- * *K(h,n1,n2)* is the key generation algorithm that takes the password
-   hash *h*, concatenated with *n1* and *n2* and calculates the sha1 sum
-   of the full string.
+ * *K(h,n1,n2)* is the key generation algorithm that takes the password hash *h*, concatenated with *n1* and *n2* and calculates the sha1 sum of the full string.
 
 ## Pipelining On-Demand
 
@@ -223,18 +222,16 @@ Notifications here are simplified messages, with the body reduced to a single da
 
 ## IMIDs
 
-IMID stands for Internet Mail (or Messaging) ID. Unlike e-mail addresses, IMIDs
-can have sub-nodes. For example:
+IMID stands for Internet Mail (or Messaging) ID. To be compatible with XMPP, IMIDs follow the same format with a few specifics. First, look at this JID (Jabber ID) format:
 
-~~~~
-  domain.com
-   |--helpdesk@domain.com
-   |   |--helpdesk/alice@domain.com
-   |   '--helpdesk/bob@domain.com
-   '--admin@domain.com
-~~~~
+      [xmpp:]alice@a.com[/resource]
 
-In a similar fashion, you can direct messages to folders by appending a plus-sign
+Compare to IMID format:
+
+      [imid:]alice@a.com[/mailbox[#message]][?options]
+      [imid:]alice[+mailbox]@a.com
+
+You can direct messages to folders by appending a plus-sign
 followed by an existing folder name, for example:
 
 ~~~~
@@ -400,46 +397,78 @@ Compression is controlled via the setting `compression`.
 
 
 
+# Encryption and Signing
+
+## Key exchange
+
+To facilitate the ability to transport messages in an encrypted fashion, IMMP implements a key-exchange protocol similar to that used by pgp/gpg. This way, the sending mta can request the recipients key from the receiving mta in order to sign the message.
+
+ 1. `alice@a.com` sends a message to `bob@b.com` via her MTA `a.com`.
+ 2. `a.com` doesn't have the public key for `bob@b.com` on file in alice's address book, so it connects to `b.com`, upgrades the connection, authenticates itself (causing `b.com` to connect back to `a.com`) and then sends a key query request for the address.
+ 3. `b.com` sends the public key it has on file.
+ 4. `a.com` can now create the inner envelope and encrypt it before signing the outer envelope with it's private key.
+ 5. `a.com` now sends the full envelope over the same connection that it received the key over.
+
+### Example session
+
+~~~~
+    S:  100- IMMP/1.0 Server at b.com
+    S:  100  Please upgrade the connection to one of the following:
+    S:  102 TLS2 SSL3
+    S:  101 p=IMMP v=1.0 d=immp.b.com
+    C:  UPGRADE TLS2
+    S:  204 Upgrading to TLS2.
+    --- Connection is upgraded, everything past this point is encrypted ---
+    C:  AUTH COOKIE c1295ff8d04b21321cb3ffdda a.com
+    S:  301 Cookie authentication request initiated.
+    S:  210 Authentication accepted for mailer-daemon@a.com
+    C:  KEY REQUEST b.com
+    S:  2x0 Public key for b.com (fingerprint 0x00000000):
+    S:  2x1- ...key...
+    S:  2x1  ...key
+    --- a.com now has public key and can encrypt the envelope if needed ---
+    C:  DELIVER TO b.com
+        ...
+~~~~
+
+
+
 # Commands and Responses
 
 ## Commands
 
-Commands come in the form of one or more keywords, followed by zero or more
-parameters or switches:
+Commands come in the form of one or more keywords, followed by zero or more parameters or switches:
 
 ~~~~
-  AUTHENTICATE COOKIE cacabeefcacabad0 otherdomain.com
-        |                     |               |
-  AUTHENTICATE SECRET noccy@noccylabs.info    |
-        |                     |---------------'
-        '-----.               | 
-           Keywords        Parameters    Switches
-              |               |              '---------------------.
-              |               |                                    |
-  AS beef MBOX FETCH /inbox#9507ce26-d34e-41cb-9f14-4eeff943e25e +JSON -READ
-        |
-   Pipeline ID
+    AUTHENTICATE COOKIE cacabeefcacabad0 otherdomain.com
+          |                     |               |
+    AUTHENTICATE SECRET noccy@noccylabs.info    |
+          |                     |---------------'
+          '-----.               | 
+             Keywords        Parameters    Switches
+                |               |              '---------------------.
+                |               |                                    |
+    AS beef MBOX FETCH /inbox#9507ce26-d34e-41cb-9f14-4eeff943e25e +JSON -READ
+          |
+     Pipeline ID
 ~~~~
 
- * Keywords are written in `CAPITAL LETTERS` in this document but the parsers
-   SHOULD NOT be case sensitive when parsing keywords.
+ * Keywords are written in `CAPITAL LETTERS` in this document but the parsers SHOULD NOT be case sensitive when parsing keywords.
  * Words in lower case should be replaced with the appropriate values.
  * Quoted strings should be used verbatim.
  * Parameters only have to be quoted if they contain spaces.
  * Switches enable or disable a certain behavior of the command.
- * Pipelines can be created by prefixing the keyword `AS` followed by the
-   desired pipeline ID to use. All replies for this pipeline will have this ID
-   followed by a colon prefixed to their status codes.
+ * Pipelines can be created by prefixing the keyword `AS` followed by the desired pipeline ID to use. All replies for this pipeline will have this ID followed by a colon prefixed to their status codes.
 
 ## Responses
 
 ~~~~
-  [ pipeline ": "] status-code ["-"] " " message "\n"
-       |                |       |           |      '-- Ends with newline
-       |                |       |           '-- The message
-       |                |       '-------- Dash for continuation
-       |                '------ The numeric status code
-       '------ The pipeline ID as defined with "AS"
+    [ pipeline ": "] status-code ["-"] " " message "\n"
+         |                |       |           |      '-- Ends with newline
+         |                |       |           '-- The message
+         |                |       '-------- Dash for continuation
+         |                '------ The numeric status code
+         '------ The pipeline ID as defined with "AS"
 ~~~~
 
 ## Examples
@@ -449,59 +478,53 @@ parameters or switches:
 
 
 ~~~~
- S:  100- IMMP/1.0 Server at noccylabs.info.
- S:  100- Please upgrade the connection to one of the following:
- S:  100    TLS2 TLS3 
- S:  101 p=IMMP v=1.0 d=noccylabs.info
- C:  UPGRADE TLS3
- S:  204 Upgrading to TLS3.
+    S:  100- IMMP/1.0 Server at noccylabs.info.
+    S:  100- Please upgrade the connection to one of the following:
+    S:  100    TLS2 TLS3 
+    S:  101 p=IMMP v=1.0 d=noccylabs.info
+    C:  UPGRADE TLS3
+    S:  204 Upgrading to TLS3.
            //
-       Handshake
+        Handshake
            //
-     Encrypted Transport
+        Encrypted Transport
 ~~~~
 
 ### Authentication
 
-The authentication in IMMP is very different from previously implemented
-algorithms in existing mail protocols. In IMMP both servers and clients must
-authenticate. However, the servers authenticate by providing a cookie, thus
-providing verification of the origin domain.
+The authentication in IMMP is very different from previously implemented algorithms in existing mail protocols. In IMMP both servers and clients must authenticate. However, the servers authenticate by providing a cookie, thus providing verification of the origin domain.
 
 ~~~~
- C:  AUTH COOKIE c2a9ff172404b21391cbaffbd9 mydomain.com
- S:  301 Cookie authentication request initiated.
- S:  210 Authentication accepted for mailer-daemon@mydomain.com
+    C:  AUTH COOKIE c2a9ff172404b21391cbaffbd9 mydomain.com
+    S:  301 Cookie authentication request initiated.
+    S:  210 Authentication accepted for mailer-daemon@mydomain.com
 ~~~~
 
-And authentication with a shared secret:
+And authentication with a shared secret is performed in a similar fashion. As the connection need to be upgraded to use encryption before any authentication-related traffic is sent over the connection, it is safe to include information such as the identity of the client/mta/agent that was used to log on. This should help increase security in the cases where the mail client identification string is not known.
 
 ~~~~
- C:  AUTH SECRET noccy@noccylabs.info "Desktop Computer (Mail Client)"
- S:  302 Shared secret authentication request intiated.
- S:  303 n1=24c17bb6-11ef-4cfa-8c5c-440ceadc8431 n2=1381978910
- C:  AUTH RESPONSE 8843d7f92416211de9ebb963ff4ce28125932878
- S:  210 Authenication accepted for noccy@noccylabs.info
+    C:  AUTH SECRET noccy@noccylabs.info "Desktop Computer (Mail Client)"
+    S:  302 Shared secret authentication request intiated.
+    S:  303 n1=24c17bb6-11ef-4cfa-8c5c-440ceadc8431 n2=1381978910
+    C:  AUTH RESPONSE 8843d7f92416211de9ebb963ff4ce28125932878
+    S:  210 Authenication accepted for noccy@noccylabs.info
 ~~~~
 
 ### Reading Mail
 
 
 ~~~~
- C:  MBOX CHECK /inbox::* +RECURSIVE
- S:  240- /inbox::* u=24 t=1194
- S:  240- /inbox/lists::* u=9 t=502
- S:  240 /inbox/receipts::* u=1 t=105
- C:  AS f9ca MBOX INDEX /inbox::unread +JSON
- C:  AS ab34 MBOX INDEX /inbox/lists::unread +JSON
- ..
-~~~~
-
-> *Here pipelined transactions begin, we will follow the `f9ca` pipeline*
-
-~~~~
- S:  f9ca: 250- { "_id":"mydomain_com.4933a1ff", "from":"bob@mydomain.com", ... }
- S:  f9ca: 250 
+    C:  MBOX CHECK /inbox::* +RECURSIVE
+    S:  240- /inbox::* u=24 t=1194
+    S:  240- /inbox/lists::* u=9 t=502
+    S:  240 /inbox/receipts::* u=1 t=105
+    C:  AS f9ca MBOX INDEX /inbox::unread +JSON
+    C:  AS ab34 MBOX INDEX /inbox/lists::unread +JSON
+        ..
+        Pipelined transactions begin, we will follow the `f9ca` pipeline
+        ..
+    S:  f9ca: 250- { "_id":"mydomain_com.4933a1ff", "from":"bob@mydomain.com", ... }
+    S:  f9ca: 250 
 ~~~~
 
 
@@ -514,7 +537,7 @@ The commands are designed to be obvious and easily readable.
  * `AUTH COOKIE` - Authenticate the sender with a cookie
  * `AUTH SECRET` - Authenticate a user with a shared secret
  * `DATA` - Begins a data block transfer, for what is comparable to a MIME part of a multipart message.
- * `DELIVER TO` - Deliver a message to a IMID
+ * `DELIVER` - Deliver a message to a IMID
  * `DONE` - Sends the message initiated with `DELIVER TO` and composed with `DATA`.
  * `MBOX CHECK` - Check the status of a mailbox
  * `MBOX FETCH` - Retrieve the contents of a mailbox, or a single message
@@ -573,22 +596,18 @@ Deliver a message to a mailbox.
 **Syntax:**
 
 ~~~~
-    DELIVER TO account [+/-IMPORTANT] [+MULTIPART]
+    DELIVER TO target-host [+/-IMPORTANT] [+MULTIPART]
 ~~~~
 
 **Parameters:**
 
- * *account* - The account to which to deliver. It does not have to be on the
-   local system.
- * `+IMPORTANT` indicates high priority, `-IMPORTANT` indicates low priority.
-   Not specifying either indicates normal priority
+ * *target-host* - The final recipient host that has the ability to decrypt the envelope to find the recipient for final delivery to the mailbox.
+ * `+IMPORTANT` indicates high priority, `-IMPORTANT` indicates low priority. Not specifying either indicates normal priority
  * `+MULTIPART` indicates a multipart message.
 
 **Notes:**
 
-Upon receiving this command the server will announce it being ready to receive the
-message, or indicate an error if the message can not be delivered. The client
-should then go on and send the message as a data block:
+Upon receiving this command the server will announce it being ready to receive the message, or indicate an error if the message can not be delivered. The client should then go on and send the message as a data block:
 
 ~~~~
     C:  DELIVER TO noccy+analytics@noccylabs.info +IMPORTANT +MULTIPART

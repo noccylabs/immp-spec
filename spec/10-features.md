@@ -20,10 +20,9 @@ Sometimes, the purpose of a message is just to request a confirmation, or to not
 
 #### Scenario 1. E-mail configuration
 
- 1. Alice goes to Website.com, and registers a new account.
+ 1. Alice goes to any Website.com supporting IMMP adresses, and registers a new account.
  2. In order to validate Alice's e-mail address Website.com sends a push-notification to Alice's address containing a configuration link.
- 3. Alice receives this notification, and can click "Confirm" in the desktop
-    notification she is presented with.
+ 3. Alice receives this notification, and can click "Confirm" in the desktop notification she is presented with.
 
 #### Scenario 2. Notifications
 
@@ -54,8 +53,8 @@ Each subscription is assigned a unique identifier, and metadata is fetched as th
 When a website wishes to reach out to its subscribers it turns the stake. The message is pushed to each of the subscribers, which confirm its origin and the presence of the subscription, thus defeating a bit of unsolicited e-mailing by flagging the real ones.
 
 ~~~~
-   C:  PUSH TO noccy@noccylabs.info FROM newsletter@website.com/updates +IMPORTANT 
-   S:
+    C:  PUSH TO noccy@noccylabs.info FROM newsletter@website.com/updates +IMPORTANT 
+    S:
 ~~~~
 
 
@@ -79,7 +78,7 @@ Passwords MUST BE saved using the key derivation algorithm specified in this dra
 
 Upon the client requesting authentication using a shared secret (the generated  password) the server sends over two nounces, that are used by both the client and the server to calculate a key. The client sends its calculated key to the server, and the server compares the key. If the keys match, the user is logged in.
 
-This way plain-text passwords are never transferred in the clear, and are only used for key derivation.
+This way plain-text passwords are never transferred in the clear, and are only used for key derivation and furthermore they are additionally hashed with the nonce values, adding to the security. If a breach or other data leak occurs, no plaintext passwords will be accessible unless collisions are found in the KDA.
 
 > ***CV:*** This lacks in several aspects; first of all the passwords can be compromised and used to authenticate as the user. Better would be to use one of the nonce values as the salt, and have the user salt his copy as ordered by the server. Another option would be to fall back on a simpler scheme that allows for server-side hashed passwords.
 
@@ -88,9 +87,7 @@ This way plain-text passwords are never transferred in the clear, and are only u
 For **IMMP 1.0** H and K are defined as:
 
  * *H(p)* is the key derivation algorithm.
- * *K(h,n1,n2)* is the key generation algorithm that takes the password
-   hash *h*, concatenated with *n1* and *n2* and calculates the sha1 sum
-   of the full string.
+ * *K(h,n1,n2)* is the key generation algorithm that takes the password hash *h*, concatenated with *n1* and *n2* and calculates the sha1 sum of the full string.
 
 ## Pipelining On-Demand
 

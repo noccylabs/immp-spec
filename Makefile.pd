@@ -1,5 +1,5 @@
 #PD_OPTS=--toc --number-sections --normalize --smart -V geometry="margin=1in" -f markdown --standalone
-PD_OPTS=--toc --number-sections --standalone
+PD_OPTS=--toc --number-sections --standalone --smart --normalize -V geometry="margin=1in"
 
 # IMAGES=$(IMGMSC:.msc=.png) $(IMGDOT:.dot=.png)
 IMAGES=$(shell tools/mdimages.php -i $(CACHE) -l -g)

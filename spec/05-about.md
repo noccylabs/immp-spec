@@ -21,9 +21,12 @@ The following points are key to the design of the protocol:
 
  * All transport of messages or user information requires transport encryption.
  * The protocol must be plain-text and easy to follow.
- * The protocol must fill the role of the three main protocols in use today,
-   namely SMTP for transport, and POP3/IMAP for retrieval/storage.
+ * The protocol must fill the role of the three main protocols in use today, namely SMTP for transport, and POP3/IMAP for retrieval/storage.
  * The protocol must not be immediately backward compatible with the previously mentioned protocols, for the sole reason of not compromising its integrity by allowing one link of the chain to fall back on insecure transports.
- * The protocol should provide a transport for high-importance push-events from previously approved source.
+ * The protocol should provide a transport for high-importance push-events from previously approved sources, as well as a method to manage the aforementioned approved sources and unapproved messages.
  * The protocol should authenticate originating domains, while allowing the sender to remain anonymous.
+ * The protocol, or more precisely the IMIDs should be compatible with XMPP to provide instant messaging and more.
 
+## Authors
+
+ * **Christopher Vagnetoft** (NoccyLabs)

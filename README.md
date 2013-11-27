@@ -23,6 +23,11 @@ makefile will ensure that the images are properly generated.
 Note: This is done by the `tools/mdimages.php` script, which requires php5-cli
 to be installed (version 5.4 min).
 
+## Notes on building
+
+You need to have `mscgen`, `dotty` and `php5-cli` installed to be able to use
+the makefile to build your own pdf.
+
 ## Join the development process
 
 Use the issue tracker, fork, and send us your pull requests. Who better to help

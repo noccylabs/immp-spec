@@ -5,7 +5,7 @@ The commands are designed to be obvious and easily readable.
  * `AUTH COOKIE` - Authenticate the sender with a cookie
  * `AUTH SECRET` - Authenticate a user with a shared secret
  * `DATA` - Begins a data block transfer, for what is comparable to a MIME part of a multipart message.
- * `DELIVER TO` - Deliver a message to a IMID
+ * `DELIVER` - Deliver a message to a IMID
  * `DONE` - Sends the message initiated with `DELIVER TO` and composed with `DATA`.
  * `MBOX CHECK` - Check the status of a mailbox
  * `MBOX FETCH` - Retrieve the contents of a mailbox, or a single message
@@ -64,22 +64,18 @@ Deliver a message to a mailbox.
 **Syntax:**
 
 ~~~~
-    DELIVER TO account [+/-IMPORTANT] [+MULTIPART]
+    DELIVER TO target-host [+/-IMPORTANT] [+MULTIPART]
 ~~~~
 
 **Parameters:**
 
- * *account* - The account to which to deliver. It does not have to be on the
-   local system.
- * `+IMPORTANT` indicates high priority, `-IMPORTANT` indicates low priority.
-   Not specifying either indicates normal priority
+ * *target-host* - The final recipient host that has the ability to decrypt the envelope to find the recipient for final delivery to the mailbox.
+ * `+IMPORTANT` indicates high priority, `-IMPORTANT` indicates low priority. Not specifying either indicates normal priority
  * `+MULTIPART` indicates a multipart message.
 
 **Notes:**
 
-Upon receiving this command the server will announce it being ready to receive the
-message, or indicate an error if the message can not be delivered. The client
-should then go on and send the message as a data block:
+Upon receiving this command the server will announce it being ready to receive the message, or indicate an error if the message can not be delivered. The client should then go on and send the message as a data block:
 
 ~~~~
     C:  DELIVER TO noccy+analytics@noccylabs.info +IMPORTANT +MULTIPART
